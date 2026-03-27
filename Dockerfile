@@ -7,7 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 10000
 
-CMD ["flask", "run", "--host=0.0.0.0"]
-
+CMD ["gunicorn", "app.main:app", "--bind", "0.0.0.0:10000"]
