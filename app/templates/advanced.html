@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AI Voice Assistant - Smart Study Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #1e3c72;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Voice Input Section */
+        .voice-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .voice-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .voice-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #1e3c72;
+            border-color: white;
+        }
+
+        /* Voice Controls */
+        .voice-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .voice-btn {
+            background: white;
+            color: #1e3c72;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .voice-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .voice-btn.recording {
+            background: #ef4444;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Voice Wave */
+        .voice-wave {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            height: 60px;
+            margin-bottom: 25px;
+        }
+
+        .wave-bar {
+            width: 6px;
+            height: 20px;
+            background: white;
+            border-radius: 3px;
+            transition: height 0.1s ease;
+        }
+
+        /* Voice Status */
+        .voice-status {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* Voice Text Area */
+        .voice-textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        /* Voice Stats */
+        .voice-stats {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-size: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 15px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-body textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .card-body textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .card-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            display: none;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 3px solid #2a5298;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Doubt Section */
+        .doubt-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .doubt-section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doubt-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .doubt-input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .doubt-input-group input:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: #f1f5f9;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .quick-btn:hover {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Timer */
+        .timer-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            font-family: monospace;
+            color: #2a5298;
+            margin: 15px 0;
+        }
+
+        .timer-buttons button {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 8px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timer-buttons button:hover {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e3c72;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .doubt-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 Multi-Language Voice Assistant</h1>
+            <p>Speak in English, తెలుగు, हिंदी | AI analyzes & answers your doubts</p>
+            <div class="nav">
+                <a href="/" class="nav-btn">📖 Study</a>
+                <a href="/advanced" class="nav-btn active">🎤 Voice Assistant</a>
+                <a href="/dashboard" class="nav-btn">📊 Dashboard</a>
+            </div>
+        </div>
+
+        <!-- Voice Input Section -->
+        <div class="voice-section">
+            <div class="voice-header">
+                <h2>🎙️ Voice-Powered Study Assistant</h2>
+                <p>Speak your notes, ask doubts, get instant AI analysis</p>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="en-US" onclick="setLanguage('en-US', 'English')">🇺🇸 English</button>
+                <button class="lang-btn" data-lang="te-IN" onclick="setLanguage('te-IN', 'Telugu')">🇮🇳 తెలుగు</button>
+                <button class="lang-btn" data-lang="hi-IN" onclick="setLanguage('hi-IN', 'Hindi')">🇮🇳 हिंदी</button>
+            </div>
+
+            <!-- Voice Controls -->
+            <div class="voice-controls">
+                <button class="voice-btn" id="startVoiceBtn" onclick="startVoiceInput()">
+                    🎙️ Start Recording
+                </button>
+                <button class="voice-btn" onclick="stopVoiceInput()">
+                    ⏹️ Stop Recording
+                </button>
+                <button class="voice-btn" onclick="clearVoiceText()">
+                    🗑️ Clear
+                </button>
+                <button class="voice-btn" onclick="copyVoiceText()">
+                    📋 Copy
+                </button>
+            </div>
+
+            <!-- Voice Wave Animation -->
+            <div class="voice-wave" id="voiceWave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+
+            <div class="voice-status" id="voiceStatus">
+                🎤 Select language and click "Start Recording" to speak
+            </div>
+
+            <textarea id="voiceText" class="voice-textarea" rows="5" placeholder="Your spoken text will appear here..."></textarea>
+
+            <div class="voice-stats">
+                <span class="stat-badge">📊 <span id="wordCount">0</span> words</span>
+                <span class="stat-badge">⏱️ <span id="recordingTime">0</span> sec</span>
+                <span class="stat-badge">🌐 <span id="currentLang">English</span></span>
+                <span class="stat-badge">🎯 Confidence: <span id="confidence">-</span>%</span>
+            </div>
+        </div>
+
+        <!-- Main Features Grid -->
+        <div class="main-grid">
+            <!-- Summarize Topic -->
+            <div class="card">
+                <div class="card-header">
+                    <span>📝</span>
+                    <h3>Summarize Topic</h3>
+                </div>
+                <div class="card-body">
+                    <textarea id="summarizeText" rows="3" placeholder="Enter text or use voice input..."></textarea>
+                    <button class="card-btn" onclick="summarizeTopic()">🔍 Generate Summary</button>
+                    <div id="summarizeResult" class="result-box"></div>
+                </div>
+            </div>
+
+            <!-- Analyze Topic -->
+            <div class="card">
+                <div class="card-header">
+                    <span>📊</span>
+                    <h3>Analyze Topic</h3>
+                </div>
+                <div class="card-body">
+                    <textarea id="analyzeText" rows="3" placeholder="Enter text or use voice input..."></textarea>
+                    <button class="card-btn" onclick="analyzeTopic()">🔬 Analyze Topic</button>
+                    <div id="analyzeResult" class="result-box"></div>
+                </div>
+            </div>
+
+            <!-- Key Points Extractor -->
+            <div class="card">
+                <div class="card-header">
+                    <span>🎯</span>
+                    <h3>Key Points</h3>
+                </div>
+                <div class="card-body">
+                    <textarea id="keypointsText" rows="3" placeholder="Enter text or use voice input..."></textarea>
+                    <button class="card-btn" onclick="extractKeyPoints()">📌 Extract Key Points</button>
+                    <div id="keypointsResult" class="result-box"></div>
+                </div>
+            </div>
+
+            <!-- Study Plan -->
+            <div class="card">
+                <div class="card-header">
+                    <span>📅</span>
+                    <h3>Study Plan</h3>
+                </div>
+                <div class="card-body">
+                    <textarea id="planText" rows="3" placeholder="Enter topic or use voice input..."></textarea>
+                    <button class="card-btn" onclick="generateStudyPlan()">📖 Create Study Plan</button>
+                    <div id="planResult" class="result-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ask Doubts Section -->
+        <div class="doubt-section">
+            <h2>
+                <span>❓</span>
+                Ask Your Doubts - Get AI Answers
+            </h2>
+            <div class="doubt-input-group">
+                <input type="text" id="doubtInput" placeholder="Type or speak your doubt here...">
+                <button class="card-btn" style="width: auto; padding: 12px 25px;" onclick="askDoubt()">Ask AI</button>
+            </div>
+            <div class="quick-actions">
+                <span class="quick-btn" onclick="setDoubt('What is the main concept?')">What is the main concept?</span>
+                <span class="quick-btn" onclick="setDoubt('Can you explain in simple terms?')">Explain simply</span>
+                <span class="quick-btn" onclick="setDoubt('Give me examples')">Give examples</span>
+                <span class="quick-btn" onclick="setDoubt('Summarize key points')">Summarize key points</span>
+            </div>
+            <div id="doubtResult" class="result-box" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Pomodoro Timer -->
+        <div class="timer-section">
+            <h3>⏰ Pomodoro Study Timer</h3>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-buttons">
+                <button onclick="startTimer()">▶️ Start</button>
+                <button onclick="pauseTimer()">⏸️ Pause</button>
+                <button onclick="resetTimer()">🔄 Reset</button>
+                <button onclick="setTimer(25)">25 min</button>
+                <button onclick="setTimer(45)">45 min</button>
+                <button onclick="setTimer(60)">60 min</button>
+            </div>
+            <div id="timerMessage" style="color: #2a5298; margin-top: 10px;"></div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>🤖 AI is processing your request...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Voice Recognition Variables
+        let recognition = null;
+        let isRecording = false;
+        let recordingStartTime = null;
+        let recordingTimer = null;
+        let currentLang = 'en-US';
+        let currentLangName = 'English';
+        let waveInterval = null;
+
+        // Set Language
+        function setLanguage(langCode, langName) {
+            currentLang = langCode;
+            currentLangName = langName;
+            document.getElementById('currentLang').textContent = langName;
+
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === langCode) {
+                    btn.classList.add('active');
+                }
+            });
+
+            showToast(`Language switched to ${langName}`, 'success');
+        }
+
+        // Start Voice Input
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+                recognition = new SpeechRecognition();
+
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = currentLang;
+
+                recognition.onstart = function() {
+                    isRecording = true;
+                    recordingStartTime = Date.now();
+                    document.getElementById('voiceStatus').innerHTML = '🎤 Listening... Speak in ' + currentLangName;
+                    document.getElementById('startVoiceBtn').classList.add('recording');
+                    startWaveAnimation();
+
+                    if (recordingTimer) clearInterval(recordingTimer);
+                    recordingTimer = setInterval(updateRecordingTime, 1000);
+
+                    showToast(`Recording started in ${currentLangName}`, 'info');
+                };
+
+                recognition.onresult = function(event) {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript + ' ';
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+
+                    const textarea = document.getElementById('voiceText');
+                    const currentText = textarea.value;
+
+                    if (finalTranscript) {
+                        textarea.value = currentText + finalTranscript;
+                        updateWordCount();
+
+                        const confidence = event.results[event.resultIndex][0].confidence;
+                        if (confidence) {
+                            document.getElementById('confidence').textContent = Math.round(confidence * 100);
+                        }
+                    }
+
+                    if (interimTranscript) {
+                        document.getElementById('voiceStatus').innerHTML = `🎤 Listening: "${interimTranscript}"`;
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    let errorMessage = '';
+                    switch(event.error) {
+                        case 'not-allowed':
+                            errorMessage = 'Microphone access denied. Please allow microphone access.';
+                            break;
+                        case 'no-speech':
+                            errorMessage = 'No speech detected. Please try again.';
+                            break;
+                        default:
+                            errorMessage = `Error: ${event.error}`;
+                    }
+                    document.getElementById('voiceStatus').innerHTML = `⚠️ ${errorMessage}`;
+                    showToast(errorMessage, 'error');
+                    stopVoiceInput();
+                };
+
+                recognition.onend = function() {
+                    if (isRecording) {
+                        stopVoiceInput();
+                    }
+                };
+
+                recognition.start();
+            } else {
+                showToast('Speech recognition not supported in this browser. Try Chrome!', 'error');
+            }
+        }
+
+        function stopVoiceInput() {
+            if (recognition) {
+                recognition.stop();
+                recognition = null;
+            }
+
+            isRecording = false;
+            if (recordingTimer) clearInterval(recordingTimer);
+            stopWaveAnimation();
+
+            document.getElementById('startVoiceBtn').classList.remove('recording');
+            document.getElementById('voiceStatus').innerHTML = '✅ Recording stopped. Text captured!';
+
+            const text = document.getElementById('voiceText').value;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            if (words > 0) {
+                showToast(`✅ Captured ${words} words in ${currentLangName}!`, 'success');
+            }
+        }
+
+        function clearVoiceText() {
+            document.getElementById('voiceText').value = '';
+            updateWordCount();
+            document.getElementById('confidence').textContent = '-';
+            showToast('Text cleared', 'info');
+        }
+
+        function copyVoiceText() {
+            const text = document.getElementById('voiceText').value;
+            if (text) {
+                navigator.clipboard.writeText(text);
+                showToast('Text copied to clipboard!', 'success');
+            } else {
+                showToast('No text to copy', 'error');
+            }
+        }
+
+        function updateWordCount() {
+            const text = document.getElementById('voiceText').value;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            document.getElementById('wordCount').textContent = words;
+        }
+
+        function updateRecordingTime() {
+            if (recordingStartTime && isRecording) {
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                document.getElementById('recordingTime').textContent = elapsed;
+            }
+        }
+
+        function startWaveAnimation() {
+            if (waveInterval) clearInterval(waveInterval);
+            waveInterval = setInterval(() => {
+                const bars = document.querySelectorAll('.wave-bar');
+                bars.forEach(bar => {
+                    const height = isRecording ? 15 + Math.random() * 35 : 10;
+                    bar.style.height = `${height}px`;
+                });
+            }, 100);
+        }
+
+        function stopWaveAnimation() {
+            if (waveInterval) clearInterval(waveInterval);
+            const bars = document.querySelectorAll('.wave-bar');
+            bars.forEach(bar => bar.style.height = '10px');
+        }
+
+        // Load voice text into feature
+        function loadVoiceToFeature(featureId) {
+            const voiceText = document.getElementById('voiceText').value;
+            if (voiceText) {
+                document.getElementById(featureId).value = voiceText;
+                showToast('Voice text loaded!', 'success');
+            } else {
+                showToast('No voice text available. Record something first!', 'error');
+            }
+        }
+
+        // Quick doubt setter
+        function setDoubt(question) {
+            document.getElementById('doubtInput').value = question;
+        }
+
+        // Summarize Topic
+        async function summarizeTopic() {
+            let text = document.getElementById('summarizeText').value;
+            if (!text) text = document.getElementById('voiceText').value;
+            if (!text) { showToast('Please enter or speak some text to summarize', 'error'); return; }
+
+            showLoading();
+            setTimeout(() => {
+                const words = text.split(/\s+/).length;
+                const summary = text.split('.').slice(0, 3).join('.') + (text.split('.').length > 3 ? '...' : '');
+                document.getElementById('summarizeResult').innerHTML = `
+                    <div style="font-weight: bold; color: #2a5298;">📝 Summary</div>
+                    <div>${summary || text.substring(0, 200)}</div>
+                    <div style="margin-top: 10px; font-size: 12px; color: #64748b;">📊 ${words} words analyzed</div>
+                `;
+                document.getElementById('summarizeResult').classList.add('show');
+                hideLoading();
+                showToast('Summary generated!');
+            }, 800);
+        }
+
+        // Analyze Topic
+        async function analyzeTopic() {
+            let text = document.getElementById('analyzeText').value;
+            if (!text) text = document.getElementById('voiceText').value;
+            if (!text) { showToast('Please enter or speak text to analyze', 'error'); return; }
+
+            showLoading();
+            setTimeout(() => {
+                const words = text.split(/\s+/).length;
+                const complexity = words > 100 ? 'Advanced' : words > 50 ? 'Intermediate' : 'Beginner';
+                const topics = text.split(' ').slice(0, 5).join(', ');
+                document.getElementById('analyzeResult').innerHTML = `
+                    <div style="font-weight: bold; color: #2a5298;">🔬 Topic Analysis</div>
+                    <div><strong>Main Topic:</strong> ${topics || 'General Study'}</div>
+                    <div><strong>Complexity Level:</strong> ${complexity}</div>
+                    <div><strong>Word Count:</strong> ${words}</div>
+                    <div><strong>Reading Time:</strong> ${Math.ceil(words / 200)} min</div>
+                    <div style="margin-top: 10px;"><strong>Key Concepts:</strong><br>• ${text.split('.').slice(0, 3).join('<br>• ')}</div>
+                `;
+                document.getElementById('analyzeResult').classList.add('show');
+                hideLoading();
+                showToast('Analysis complete!');
+            }, 800);
+        }
+
+        // Extract Key Points
+        async function extractKeyPoints() {
+            let text = document.getElementById('keypointsText').value;
+            if (!text) text = document.getElementById('voiceText').value;
+            if (!text) { showToast('Please enter or speak text', 'error'); return; }
+
+            showLoading();
+            setTimeout(() => {
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 10);
+                const keyPoints = sentences.slice(0, 5).map((s, i) => `• ${s.trim().substring(0, 100)}${s.length > 100 ? '...' : ''}`);
+                document.getElementById('keypointsResult').innerHTML = `
+                    <div style="font-weight: bold; color: #2a5298;">🎯 Key Points</div>
+                    ${keyPoints.length ? keyPoints.join('<br>') : '• ' + text.substring(0, 150) + '...'}
+                    <div style="margin-top: 10px; font-size: 12px; color: #64748b;">📌 ${keyPoints.length} key points extracted</div>
+                `;
+                document.getElementById('keypointsResult').classList.add('show');
+                hideLoading();
+                showToast('Key points extracted!');
+            }, 700);
+        }
+
+        // Generate Study Plan
+        async function generateStudyPlan() {
+            let text = document.getElementById('planText').value;
+            if (!text) text = document.getElementById('voiceText').value;
+            if (!text) { showToast('Please enter a topic', 'error'); return; }
+
+            showLoading();
+            setTimeout(() => {
+                const topic = text.substring(0, 50);
+                document.getElementById('planResult').innerHTML = `
+                    <div style="font-weight: bold; color: #2a5298;">📅 Study Plan: ${topic}</div>
+                    <div style="margin-top: 10px;"><strong>📚 Day 1:</strong> Read and understand core concepts</div>
+                    <div><strong>✍️ Day 2:</strong> Take notes and summarize key points</div>
+                    <div><strong>🔄 Day 3:</strong> Review and practice with questions</div>
+                    <div><strong>👥 Day 4:</strong> Teach someone else to reinforce learning</div>
+                    <div><strong>📝 Day 5:</strong> Take practice test and revise weak areas</div>
+                    <div style="margin-top: 10px; background: #eef2ff; padding: 10px; border-radius: 8px;">
+                        💡 <strong>Recommended:</strong> Study 25 min sessions with 5 min breaks
+                    </div>
+                `;
+                document.getElementById('planResult').classList.add('show');
+                hideLoading();
+                showToast('Study plan created!');
+            }, 800);
+        }
+
+        // Ask Doubt
+        async function askDoubt() {
+            let doubt = document.getElementById('doubtInput').value;
+            if (!doubt) { showToast('Please enter your doubt', 'error'); return; }
+
+            showLoading();
+            setTimeout(() => {
+                const answers = {
+                    'what is': 'This concept refers to the fundamental understanding of the topic. Let me explain in simple terms:',
+                    'explain': 'I\'ll explain this in a clear and structured way. Here\'s what you need to know:',
+                    'example': 'Here are some practical examples to help you understand better:',
+                    'summarize': 'Here\'s a concise summary of the key points:'
+                };
+
+                let response = '';
+                for (let [key, value] of Object.entries(answers)) {
+                    if (doubt.toLowerCase().includes(key)) {
+                        response = value;
+                        break;
+                    }
+                }
+
+                if (!response) {
+                    response = 'Great question! Here\'s what you need to know about this topic:';
+                }
+
+                document.getElementById('doubtResult').innerHTML = `
+                    <div style="font-weight: bold; color: #2a5298;">❓ Question: ${doubt}</div>
+                    <div style="margin-top: 10px;"><strong>🤖 AI Answer:</strong><br>${response}</div>
+                    <div style="margin-top: 10px; padding: 10px; background: #f1f5f9; border-radius: 8px;">
+                        💡 <strong>Study Tip:</strong> Try explaining this concept in your own words to reinforce understanding.
+                    </div>
+                `;
+                document.getElementById('doubtResult').classList.add('show');
+                hideLoading();
+                showToast('Answer generated!');
+            }, 1000);
+        }
+
+        // Timer Functions
+        let timerInterval;
+        let timeLeft = 25 * 60;
+        let isRunning = false;
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            if (timeLeft === 0) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('timerMessage').innerHTML = '🎉 Time\'s up! Take a break! 🎉';
+                showToast('Study session complete! Great job!');
+            }
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                    }
+                }, 1000);
+                document.getElementById('timerMessage').innerHTML = '📚 Focus! Study session in progress...';
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            document.getElementById('timerMessage').innerHTML = '⏸️ Timer paused. Take a quick break!';
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+            document.getElementById('timerMessage').innerHTML = 'Timer reset. Ready to study?';
+        }
+
+        function setTimer(minutes) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = minutes * 60;
+            updateTimerDisplay();
+            document.getElementById('timerMessage').innerHTML = `Set to ${minutes} minutes. Click start when ready!`;
+        }
+
+        // Helper Functions
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Update word count on voice text change
+        document.getElementById('voiceText').addEventListener('input', updateWordCount);
+        updateTimerDisplay();
+    </script>
+</body>
+</html>

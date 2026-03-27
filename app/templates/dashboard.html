@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Study Assistant Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #4a5568;
+            font-size: 1rem;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #1e3c72;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30,60,114,0.2);
+            border-color: transparent;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(30,60,114,0.12);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-trend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        .trend-up {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .trend-down {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Level Card */
+        .level-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .level-card .stat-value {
+            background: none;
+            -webkit-text-fill-color: white;
+            color: white;
+        }
+
+        .level-card .stat-label {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .progress-section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-card h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Activity Chart */
+        .activity-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        .activity-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 40px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 8px 8px 4px 4px;
+            transition: height 0.5s ease;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: scaleX(1.1);
+        }
+
+        .day-label {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* Topic Distribution */
+        .topic-list {
+            margin-top: 15px;
+        }
+
+        .topic-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .topic-name {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .topic-count {
+            color: #2a5298;
+            font-weight: bold;
+        }
+
+        .topic-bar {
+            flex: 1;
+            margin: 0 15px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .topic-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Achievements */
+        .achievements-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .badge {
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        .badge.earned {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .badge.locked {
+            opacity: 0.6;
+        }
+
+        /* Recent Sessions */
+        .sessions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .session-item {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+
+        .session-item:hover {
+            background: #f8fafc;
+        }
+
+        .difficulty-badge {
+            background: #f1f5f9;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #1e3c72;
+        }
+
+        /* Recommendations */
+        .recommendations-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .recommendation-item {
+            padding: 12px;
+            background: #f8fafc;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid #2a5298;
+            transition: all 0.3s;
+        }
+
+        .recommendation-item:hover {
+            transform: translateX(5px);
+            background: #f1f5f9;
+        }
+
+        /* Milestones */
+        .milestones-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .milestone-icon {
+            font-size: 1.5rem;
+        }
+
+        .milestone-info {
+            flex: 1;
+        }
+
+        .milestone-title {
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .milestone-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .milestone-check {
+            font-size: 1.2rem;
+        }
+
+        /* Buttons */
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .refresh-btn, .reset-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            margin: 0 5px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+        }
+
+        .reset-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e3c72;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid, .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .activity-bar .bar {
+                width: 25px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a5298;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Learning Analytics Dashboard</h1>
+            <p>Track your progress, visualize achievements, and reach your study goals</p>
+            <div class="nav">
+                <a href="/" class="nav-btn">📖 Study</a>
+                <a href="/advanced" class="nav-btn">✨ Advanced</a>
+                <a href="/dashboard" class="nav-btn active">📊 Dashboard</a>
+            </div>
+        </div>
+
+        <div id="dashboardContent">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading your dashboard...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let dashboardData = {
+            points: 0,
+            level: 1,
+            streak: 0,
+            sessions: [],
+            topics: {}
+        };
+
+        async function loadDashboard() {
+            try {
+                const [gamificationRes, analyticsRes, sessionsRes] = await Promise.all([
+                    fetch('/api/gamification'),
+                    fetch('/api/analytics'),
+                    fetch('/api/sessions')
+                ]);
+
+                const gamification = await gamificationRes.json();
+                const analytics = await analyticsRes.json();
+                const sessions = await sessionsRes.json();
+
+                renderDashboard(gamification, analytics, sessions);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('dashboardContent').innerHTML = `
+                    <div class="loading">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error loading dashboard. Make sure the server is running.</p>
+                        <button onclick="loadDashboard()" style="margin-top: 20px; padding: 10px 20px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border: none; border-radius: 8px; cursor: pointer;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderDashboard(gamification, analytics, sessions) {
+            const stats = gamification.stats || {};
+            const totalPoints = stats.points || 0;
+            const level = stats.level || 1;
+            const streak = stats.streak || 0;
+            const achievementsCount = stats.achievements_count || 0;
+            const xp = stats.xp || 0;
+            const xpProgress = stats.xp_progress || 0;
+            const xpToNext = 100 - xp;
+
+            const totalSessions = analytics.total_sessions || 0;
+            const totalHours = analytics.total_study_time_hours || 0;
+            const favoriteTopic = analytics.favorite_topic || 'Not yet';
+            const avgScore = analytics.average_score_percent || 75;
+
+            const achievements = gamification.achievements || [];
+            const recentSessions = sessions.sessions || [];
+
+            // Calculate weekly activity
+            const weeklyActivity = calculateWeeklyActivity(recentSessions);
+
+            // Calculate topic distribution
+            const topicDistribution = calculateTopicDistribution(recentSessions);
+
+            // Calculate milestones
+            const milestones = calculateMilestones(totalPoints, streak, totalSessions, achievements.length);
+
+            const dashboardHtml = `
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value">${totalPoints}</div>
+                        <div class="stat-label">Total Points</div>
+                        <div class="stat-trend trend-up">+${Math.floor(totalPoints * 0.1)} this week</div>
+                    </div>
+
+                    <div class="stat-card level-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value">Level ${level}</div>
+                        <div class="stat-label">Study Level</div>
+                        <div class="progress-bar-container" style="margin-top: 15px;">
+                            <div class="progress-fill" style="width: ${xpProgress}%"></div>
+                        </div>
+                        <div style="font-size: 12px; margin-top: 8px;">${xpToNext} XP to next level</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-value">${streak}</div>
+                        <div class="stat-label">Day Streak</div>
+                        <div class="stat-trend ${streak >= 3 ? 'trend-up' : 'trend-down'}">${streak >= 3 ? 'Keep going!' : 'Start a streak!'}</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🏅</div>
+                        <div class="stat-value">${achievementsCount}</div>
+                        <div class="stat-label">Achievements</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-value">${totalSessions}</div>
+                        <div class="stat-label">Total Sessions</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⏰</div>
+                        <div class="stat-value">${totalHours}</div>
+                        <div class="stat-label">Study Hours</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value">${favoriteTopic.substring(0, 20)}</div>
+                        <div class="stat-label">Favorite Topic</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value">${avgScore}%</div>
+                        <div class="stat-label">Avg Quiz Score</div>
+                    </div>
+                </div>
+
+                <!-- Progress Overview -->
+                <div class="progress-section">
+                    <h2>📈 Learning Progress Overview</h2>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>📖 Overall Progress</span>
+                            <span>${Math.min(100, Math.floor((totalSessions / 50) * 100))}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill" style="width: ${Math.min(100, Math.floor((totalSessions / 50) * 100))}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>🏆 Achievement Progress</span>
+                            <span>${Math.min(100, Math.floor((achievementsCount / 5) * 100))}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill" style="width: ${Math.min(100, Math.floor((achievementsCount / 5) * 100))}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>⭐ Points to Next Level</span>
+                            <span>${xp} / 100 XP</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill" style="width: ${xpProgress}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <!-- Weekly Activity Chart -->
+                    <div class="chart-card">
+                        <h3>📊 Weekly Study Activity</h3>
+                        <div class="activity-chart">
+                            ${weeklyActivity.map(day => `
+                                <div class="activity-bar">
+                                    <div class="bar" style="height: ${day.count * 8}px; width: 40px;" title="${day.count} sessions"></div>
+                                    <div class="day-label">${day.day}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Topic Distribution -->
+                    <div class="chart-card">
+                        <h3>🎯 Topic Distribution</h3>
+                        <div class="topic-list">
+                            ${topicDistribution.map(topic => `
+                                <div class="topic-item">
+                                    <span class="topic-name">${topic.name}</span>
+                                    <div class="topic-bar">
+                                        <div class="topic-fill" style="width: ${topic.percentage}%"></div>
+                                    </div>
+                                    <span class="topic-count">${topic.count}</span>
+                                </div>
+                            `).join('')}
+                            ${topicDistribution.length === 0 ? '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No topics studied yet</p></div>' : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Milestones -->
+                <div class="milestones-section">
+                    <h2>🎯 Upcoming Milestones</h2>
+                    ${milestones.map(milestone => `
+                        <div class="milestone-item">
+                            <div class="milestone-icon">${milestone.icon}</div>
+                            <div class="milestone-info">
+                                <div class="milestone-title">${milestone.title}</div>
+                                <div class="milestone-desc">${milestone.description}</div>
+                                <div class="progress-bar-container" style="margin-top: 8px;">
+                                    <div class="progress-fill" style="width: ${milestone.progress}%"></div>
+                                </div>
+                            </div>
+                            <div class="milestone-check">${milestone.completed ? '✅' : '⏳'}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- Achievements -->
+                <div class="achievements-section">
+                    <h2>🏆 Achievements & Badges</h2>
+                    <div class="badge-container">
+                        ${renderBadges(achievements, totalPoints, streak, totalSessions)}
+                    </div>
+                </div>
+
+                <!-- Recent Sessions -->
+                <div class="sessions-section">
+                    <h2>📝 Recent Study Sessions</h2>
+                    ${renderRecentSessions(recentSessions)}
+                </div>
+
+                <!-- Recommendations -->
+                <div class="recommendations-section">
+                    <h2>💡 Personalized Recommendations</h2>
+                    ${renderRecommendations(totalSessions, streak, totalPoints)}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="refresh-btn" onclick="loadDashboard()">🔄 Refresh Dashboard</button>
+                    <button class="reset-btn" onclick="resetProgress()">🗑️ Reset Progress</button>
+                </div>
+            `;
+
+            document.getElementById('dashboardContent').innerHTML = dashboardHtml;
+        }
+
+        function calculateWeeklyActivity(sessions) {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const activity = days.map(day => ({ day, count: 0 }));
+
+            sessions.forEach(session => {
+                const date = new Date(session.timestamp);
+                const dayIndex = date.getDay();
+                activity[dayIndex].count++;
+            });
+
+            return activity;
+        }
+
+        function calculateTopicDistribution(sessions) {
+            const topics = {};
+            sessions.forEach(session => {
+                const topic = session.text ? session.text.substring(0, 30) : 'General';
+                topics[topic] = (topics[topic] || 0) + 1;
+            });
+
+            const total = sessions.length;
+            return Object.entries(topics)
+                .map(([name, count]) => ({
+                    name: name.length > 20 ? name.substring(0, 20) + '...' : name,
+                    count,
+                    percentage: (count / total) * 100
+                }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+        }
+
+        function calculateMilestones(points, streak, sessions, achievements) {
+            return [
+                {
+                    icon: '⭐',
+                    title: '100 Points Milestone',
+                    description: 'Reach 100 total points',
+                    progress: Math.min(100, (points / 100) * 100),
+                    completed: points >= 100
+                },
+                {
+                    icon: '🔥',
+                    title: '7-Day Streak',
+                    description: 'Study for 7 consecutive days',
+                    progress: Math.min(100, (streak / 7) * 100),
+                    completed: streak >= 7
+                },
+                {
+                    icon: '📚',
+                    title: '10 Study Sessions',
+                    description: 'Complete 10 study sessions',
+                    progress: Math.min(100, (sessions / 10) * 100),
+                    completed: sessions >= 10
+                },
+                {
+                    icon: '🏆',
+                    title: '5 Achievements',
+                    description: 'Earn 5 achievements',
+                    progress: Math.min(100, (achievements / 5) * 100),
+                    completed: achievements >= 5
+                }
+            ];
+        }
+
+        function renderBadges(achievements, points, streak, sessions) {
+            const allBadges = [
+                { name: "First Steps 🌱", condition: "Complete first study session", earned: sessions >= 1, icon: "🌱" },
+                { name: "100 Points 🎯", condition: "Reach 100 points", earned: points >= 100, icon: "🎯" },
+                { name: "500 Points 🏆", condition: "Reach 500 points", earned: points >= 500, icon: "🏆" },
+                { name: "1000 Points 👑", condition: "Reach 1000 points", earned: points >= 1000, icon: "👑" },
+                { name: "Week Warrior 🔥", condition: "7-day streak", earned: streak >= 7, icon: "🔥" },
+                { name: "Study Master 📚", condition: "20 study sessions", earned: sessions >= 20, icon: "📚" }
+            ];
+
+            return allBadges.map(badge => `
+                <div class="badge ${badge.earned ? 'earned' : 'locked'}">
+                    <span class="badge-icon">${badge.icon}</span>
+                    <div>
+                        <div style="font-weight: bold;">${badge.name}</div>
+                        <div style="font-size: 10px; opacity: 0.8;">${badge.condition}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecentSessions(sessions) {
+            if (!sessions || sessions.length === 0) {
+                return '<div class="empty-state"><div class="empty-state-icon">📖</div><p>No study sessions yet. Start your first study session!</p></div>';
+            }
+
+            return sessions.slice().reverse().slice(0, 5).map(session => {
+                const date = new Date(session.timestamp);
+                const formattedDate = date.toLocaleString();
+                const topic = session.text || 'Study Session';
+                const difficulty = session.difficulty || 'medium';
+                const difficultyIcon = difficulty === 'easy' ? '📘' : difficulty === 'hard' ? '📕' : '📙';
+
+                return `
+                    <div class="session-item">
+                        <div>
+                            <div class="session-topic">${topic.substring(0, 50)}${topic.length > 50 ? '...' : ''}</div>
+                            <div class="session-time">${formattedDate}</div>
+                        </div>
+                        <div>
+                            <span class="difficulty-badge">${difficultyIcon} ${difficulty.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderRecommendations(sessions, streak, points) {
+            const recommendations = [];
+
+            if (sessions === 0) {
+                recommendations.push("🎯 Start your first study session to begin tracking progress");
+                recommendations.push("📚 Use the Study page to analyze your first text");
+            }
+            if (streak === 0 && sessions > 0) {
+                recommendations.push("🔥 Study daily to build a streak and earn bonus points");
+            }
+            if (points < 100 && sessions > 0) {
+                recommendations.push("⭐ Keep studying to reach 100 points and earn your first badge");
+            }
+            if (sessions >= 5 && points < 500) {
+                recommendations.push("🏆 You're on a roll! Aim for 500 points to unlock the next badge");
+            }
+
+            recommendations.push("💡 Use active recall for better retention");
+            recommendations.push("📝 Create flashcards for key concepts");
+            recommendations.push("🎓 Review material within 24 hours of studying");
+
+            return recommendations.slice(0, 5).map(rec => `
+                <div class="recommendation-item">
+                    <span class="recommendation-icon">${rec.split(' ')[0]}</span>
+                    <span>${rec}</span>
+                </div>
+            `).join('');
+        }
+
+        async function resetProgress() {
+            if (confirm('⚠️ Are you sure you want to reset all your progress? This cannot be undone.')) {
+                try {
+                    const response = await fetch('/api/reset', { method: 'POST' });
+                    if (response.ok) {
+                        showToast('✅ Progress reset successfully!');
+                        setTimeout(() => loadDashboard(), 1000);
+                    } else {
+                        showToast('❌ Error resetting progress');
+                    }
+                } catch (error) {
+                    showToast('❌ Error resetting progress');
+                }
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

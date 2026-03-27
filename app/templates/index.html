@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Study Assistant - Multi-Language Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #1e3c72;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .language-bar {
+            background: white;
+            border-radius: 60px;
+            padding: 8px;
+            display: inline-flex;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .lang-selector-btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            background: transparent;
+            border: none;
+            font-size: 14px;
+        }
+
+        .lang-selector-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .lang-selector-btn.active {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .input-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-card h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-select {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .analyze-btn {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: none;
+            max-height: 500px;
+            overflow-y: auto;
+            line-height: 1.8;
+            font-size: 14px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        .metadata {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #64748b;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 15px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .feature-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .feature-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .compare-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .compare-section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .compare-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .study-tips {
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+            padding: 20px;
+            border-radius: 20px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e3c72;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #1e3c72;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Smart Study Assistant 🎯</h1>
+            <p>Learn in English | తెలుగు | हिंदी | AI-powered summarization & analysis</p>
+            <div class="nav">
+                <a href="/" class="nav-btn active">📖 Study</a>
+                <a href="/advanced" class="nav-btn">✨ Advanced</a>
+                <a href="/dashboard" class="nav-btn">📊 Dashboard</a>
+            </div>
+        </div>
+
+        <!-- Language Selector -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div class="language-bar">
+                <button class="lang-selector-btn active" data-lang="en" onclick="setLanguage('en')">🇺🇸 English</button>
+                <button class="lang-selector-btn" data-lang="te" onclick="setLanguage('te')">🇮🇳 తెలుగు</button>
+                <button class="lang-selector-btn" data-lang="hi" onclick="setLanguage('hi')">🇮🇳 हिंदी</button>
+            </div>
+        </div>
+
+        <!-- Main Input Card -->
+        <div class="input-card">
+            <h2>
+                <span>📝</span>
+                <span id="inputTitle">Enter Your Study Material</span>
+            </h2>
+            <textarea id="mainText" rows="8" placeholder="Paste your study notes, textbook content, or any educational text here..."></textarea>
+            <div class="controls">
+                <select id="difficulty" class="difficulty-select">
+                    <option value="easy">📘 Easy Mode</option>
+                    <option value="medium" selected>📙 Medium Mode</option>
+                    <option value="hard">📕 Hard Mode</option>
+                </select>
+                <button class="analyze-btn" onclick="analyzeText()" id="analyzeBtn">✨ Generate Study Materials</button>
+            </div>
+            <div id="mainResult" class="result-box"></div>
+            <div id="mainMetadata" class="metadata"></div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="card-header">
+                    <span>📝</span>
+                    <h3>Multi-Level Summaries</h3>
+                </div>
+                <div class="card-body">
+                    <div class="feature-desc">Get summaries at different depths - quick overview, detailed review, or comprehensive analysis.</div>
+                    <button class="feature-btn" onclick="generateSummaries()">Generate Summaries</button>
+                    <div id="summaryResult" class="result-box"></div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-header">
+                    <span>🎯</span>
+                    <h3>Smart Topic Detection</h3>
+                </div>
+                <div class="card-body">
+                    <div class="feature-desc">Automatically identify the main subject, key concepts, and related topics.</div>
+                    <button class="feature-btn" onclick="detectTopics()">Analyze Topics</button>
+                    <div id="topicResult" class="result-box"></div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-header">
+                    <span>📅</span>
+                    <h3>Study Plan Generator</h3>
+                </div>
+                <div class="card-body">
+                    <div class="feature-desc">Get a customized study schedule with techniques and time allocation.</div>
+                    <button class="feature-btn" onclick="generateStudyPlan()">Create Study Plan</button>
+                    <div id="planResult" class="result-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Section -->
+        <div class="compare-section">
+            <h2>🔄 Compare & Contrast Topics</h2>
+            <div class="compare-grid">
+                <textarea id="compareText1" rows="4" placeholder="Enter first topic or concept..."></textarea>
+                <textarea id="compareText2" rows="4" placeholder="Enter second topic or concept..."></textarea>
+            </div>
+            <button class="compare-btn" onclick="compareTopics()">Compare Topics</button>
+            <div id="compareResult" class="result-box"></div>
+        </div>
+
+        <!-- Study Tips -->
+        <div class="study-tips">
+            <h3>📚 Exam Preparation Tips</h3>
+            <div class="tips-grid">
+                <div class="tip-item">✓ <strong>Active Recall</strong> - Test yourself regularly</div>
+                <div class="tip-item">✓ <strong>Spaced Repetition</strong> - Review at increasing intervals</div>
+                <div class="tip-item">✓ <strong>Pomodoro Technique</strong> - 25 min study, 5 min break</div>
+                <div class="tip-item">✓ <strong>Teach Others</strong> - Explain concepts to reinforce learning</div>
+            </div>
+        </div>
+
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p id="loadingText">🤖 AI is analyzing your text...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: { inputTitle: "📝 Enter Your Study Material", analyzeBtn: "✨ Generate Study Materials", loadingText: "🤖 AI is analyzing your text..." },
+            te: { inputTitle: "📝 మీ అధ్యయన సామగ్రిని నమోదు చేయండి", analyzeBtn: "✨ అధ్యయన సామగ్రిని రూపొందించండి", loadingText: "🤖 AI మీ టెక్స్ట్ ను విశ్లేషిస్తోంది..." },
+            hi: { inputTitle: "📝 अपनी अध्ययन सामग्री दर्ज करें", analyzeBtn: "✨ अध्ययन सामग्री तैयार करें", loadingText: "🤖 AI आपके टेक्स्ट का विश्लेषण कर रहा है..." }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            document.getElementById('inputTitle').textContent = t.inputTitle;
+            document.getElementById('analyzeBtn').textContent = t.analyzeBtn;
+            document.getElementById('loadingText').textContent = t.loadingText;
+
+            document.querySelectorAll('.lang-selector-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+            });
+            showToast(`Language switched to ${lang === 'en' ? 'English' : lang === 'te' ? 'తెలుగు' : 'हिंदी'}`);
+        }
+
+        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function getText() {
+            const text = document.getElementById('mainText').value.trim();
+            if (!text) {
+                const msg = currentLang === 'en' ? 'Please enter some text to analyze!' :
+                           currentLang === 'te' ? 'దయచేసి విశ్లేషించడానికి కొంత టెక్స్ట్ ను నమోదు చేయండి!' :
+                           'कृपया विश्लेषण के लिए कुछ टेक्स्ट दर्ज करें!';
+                showToast(msg);
+                return null;
+            }
+            return text;
+        }
+
+        // Intelligent Summarization Function
+        function intelligentlySummarize(text, lang) {
+            // Extract main idea - take first 2-3 sentences as base
+            const sentences = text.split(/[.!?।|]+/).filter(s => s.trim().length > 15);
+
+            if (sentences.length === 0) return text.substring(0, 200);
+
+            // Get main idea from first few sentences
+            let mainIdea = sentences.slice(0, 3).join('. ') + '.';
+
+            // Extract key entities (names, places, important terms)
+            const words = text.split(/\s+/);
+            const importantTerms = [];
+
+            // Look for capitalized words or important terms
+            for (let i = 0; i < words.length; i++) {
+                let word = words[i].replace(/[.,!?;:]/g, '');
+                if (word.length > 5 && (word[0] === word[0].toUpperCase() || word[0] === 'అ' || word[0] === 'ఇ' || word[0] === 'ड' || word[0] === 'प')) {
+                    if (!importantTerms.includes(word) && word.length > 3) {
+                        importantTerms.push(word);
+                    }
+                }
+            }
+
+            // Create different summary levels
+            let quickSummary = mainIdea;
+            let detailedSummary = sentences.slice(0, 5).join('. ') + '.';
+            let deepAnalysis = sentences.slice(0, 8).join('. ') + '.';
+
+            // If text is short, adjust summaries
+            if (sentences.length <= 3) {
+                quickSummary = text.substring(0, 150) + (text.length > 150 ? '...' : '');
+                detailedSummary = text.substring(0, 300) + (text.length > 300 ? '...' : '');
+                deepAnalysis = text.substring(0, 500) + (text.length > 500 ? '...' : '');
+            }
+
+            return { quickSummary, detailedSummary, deepAnalysis, importantTerms };
+        }
+
+        // Main Analysis Function - Intelligent Summarization
+        async function analyzeText() {
+            let text = getText();
+            if (!text) return;
+
+            showLoading();
+
+            setTimeout(() => {
+                // Get intelligent summaries
+                const { quickSummary, detailedSummary, deepAnalysis, importantTerms } = intelligentlySummarize(text, currentLang);
+
+                // Extract key points from text
+                const sentences = text.split(/[.!?।|]+/).filter(s => s.trim().length > 20);
+                const keyPoints = sentences.slice(0, 5).map((s, i) => `• ${s.trim()}`);
+
+                // Generate questions based on text
+                const mainTopic = importantTerms[0] || text.substring(0, 30);
+                const questions = [
+                    `❓ Question 1: What is the main idea of this text about ${mainTopic}?`,
+                    `   💡 Answer: ${quickSummary.substring(0, 150)}`,
+                    `❓ Question 2: What are the key points mentioned?`,
+                    `   💡 Answer: ${keyPoints.slice(0, 3).join('; ')}`,
+                    `❓ Question 3: How can you apply this knowledge?`,
+                    `   💡 Answer: Practice regularly and review these concepts to reinforce learning.`
+                ];
+
+                // Language-specific study tips
+                let studyTip = '';
+                let relatedTopics = [];
+
+                if (currentLang === 'te') {
+                    studyTip = '💡 అధ్యయన చిట్కా: సంక్లిష్ట విషయాలను చిన్న భాగాలుగా విభజించి అధ్యయనం చేయండి. యాక్టివ్ రీకాల్ పద్ధతిని ఉపయోగించండి. రోజూ కొంత సమయం కేటాయించండి.';
+                    relatedTopics = ['🔗 అధ్యయన పద్ధతులు', '🔗 గమనికలు రాయడం', '🔗 జ్ఞాన నిలుపుదల', '🔗 పునరావృతం'];
+                } else if (currentLang === 'hi') {
+                    studyTip = '💡 अध्ययन टिप: जटिल विषयों को छोटे भागों में बांटकर पढ़ें। एक्टिव रिकॉल विधि का उपयोग करें। प्रतिदिन अध्ययन के लिए समय निर्धारित करें।';
+                    relatedTopics = ['🔗 अध्ययन तकनीकें', '🔗 नोट्स बनाने की रणनीतियाँ', '🔗 ज्ञान प्रतिधारण', '🔗 पुनरावृत्ति'];
+                } else {
+                    studyTip = '💡 Study Tip: Break complex topics into smaller chunks and use active recall. Set aside time daily for review and practice.';
+                    relatedTopics = ['🔗 Study Techniques', '🔗 Note-taking Strategies', '🔗 Knowledge Retention', '🔗 Spaced Repetition'];
+                }
+
+                // Build HTML output
+                let output = `
+                    <div style="font-size: 15px; line-height: 1.8;">
+                        <h3 style="color: #2a5298; margin-bottom: 12px; border-bottom: 2px solid #2a5298; padding-bottom: 5px;">📝 SUMMARY</h3>
+                        <p style="margin-bottom: 20px; background: white; padding: 12px; border-radius: 8px;">${quickSummary}</p>
+
+                        <h3 style="color: #2a5298; margin-bottom: 12px; border-bottom: 2px solid #2a5298; padding-bottom: 5px;">🎯 KEY POINTS</h3>
+                        <ul style="margin-bottom: 20px; margin-left: 20px;">
+                            ${keyPoints.map(p => `<li style="margin-bottom: 10px;">${p}</li>`).join('')}
+                        </ul>
+
+                        <h3 style="color: #2a5298; margin-bottom: 12px; border-bottom: 2px solid #2a5298; padding-bottom: 5px;">❓ REVISION QUESTIONS</h3>
+                        <div style="margin-bottom: 20px;">
+                            ${questions.map(q => `<div style="margin-bottom: 12px; padding: 8px; background: white; border-radius: 8px;">${q.replace(/\n/g, '<br>')}</div>`).join('')}
+                        </div>
+
+                        <h3 style="color: #2a5298; margin-bottom: 12px; border-bottom: 2px solid #2a5298; padding-bottom: 5px;">💡 STUDY TIP</h3>
+                        <p style="margin-bottom: 20px; background: #eef2ff; padding: 12px; border-radius: 8px;">${studyTip}</p>
+
+                        <h3 style="color: #2a5298; margin-bottom: 12px; border-bottom: 2px solid #2a5298; padding-bottom: 5px;">🔗 RELATED TOPICS</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${relatedTopics.map(t => `<span class="badge">${t}</span>`).join('')}
+                            ${importantTerms.slice(0, 3).map(t => `<span class="badge">📌 ${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+
+                const resultDiv = document.getElementById('mainResult');
+                resultDiv.innerHTML = output;
+                resultDiv.classList.add('show');
+
+                const words = text.split(/\s+/).length;
+                document.getElementById('mainMetadata').innerHTML = `
+                    📊 ${words} words | ⏱️ ${Math.ceil(words / 200)} min read | 📈 ${words > 200 ? 'Advanced' : words > 50 ? 'Medium' : 'Easy'} complexity
+                `;
+
+                hideLoading();
+                showToast('✅ Study materials generated!');
+            }, 500);
+        }
+
+        function generateSummaries() {
+            let text = getText();
+            if (!text) return;
+
+            showLoading();
+
+            setTimeout(() => {
+                const { quickSummary, detailedSummary, deepAnalysis } = intelligentlySummarize(text, currentLang);
+
+                const resultDiv = document.getElementById('summaryResult');
+                resultDiv.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 15px; font-size: 16px; color: #2a5298;">📝 Multi-Level Summaries</div>
+                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <strong style="color: #2a5298;">⏱️ Quick Summary (30 sec read):</strong><br>
+                        ${quickSummary}
+                    </div>
+                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <strong style="color: #2a5298;">📖 Detailed Summary (5 min read):</strong><br>
+                        ${detailedSummary}
+                    </div>
+                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <strong style="color: #2a5298;">🔬 Deep Analysis:</strong><br>
+                        ${deepAnalysis}
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: #64748b;">
+                        📊 Based on ${text.split(/\s+/).length} words
+                    </div>
+                `;
+                resultDiv.classList.add('show');
+                hideLoading();
+                showToast('✅ Summaries generated!');
+            }, 400);
+        }
+
+        function detectTopics() {
+            let text = getText();
+            if (!text) return;
+
+            showLoading();
+
+            setTimeout(() => {
+                const { importantTerms } = intelligentlySummarize(text, currentLang);
+                const words = text.split(/\s+/);
+                const wordCount = words.length;
+
+                let difficulty = '';
+                if (wordCount > 200) difficulty = 'Advanced';
+                else if (wordCount > 80) difficulty = 'Intermediate';
+                else difficulty = 'Beginner';
+
+                const resultDiv = document.getElementById('topicResult');
+                resultDiv.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #2a5298;">🎯 Topic Analysis</div>
+                    <div><strong>Main Topic:</strong> ${importantTerms[0] || 'General Study'}</div>
+                    <div><strong>Key Concepts:</strong><br>${importantTerms.slice(0, 5).map(t => `• ${t}`).join('<br>') || '• Key concepts detected from text'}</div>
+                    <div style="margin-top: 10px;"><strong>Text Complexity:</strong> ${difficulty}</div>
+                    <div><strong>Word Count:</strong> ${wordCount} words</div>
+                    <div style="margin-top: 10px;"><strong>Confidence Score:</strong> ${Math.min(95, 70 + Math.floor(wordCount / 20))}%</div>
+                `;
+                resultDiv.classList.add('show');
+                hideLoading();
+                showToast('✅ Topics detected!');
+            }, 400);
+        }
+
+        function generateStudyPlan() {
+            let text = getText();
+            if (!text) return;
+
+            const words = text.split(/\s+/).length;
+            const minutes = Math.max(15, Math.min(90, Math.floor(words / 15)));
+
+            const resultDiv = document.getElementById('planResult');
+            resultDiv.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 15px; color: #2a5298;">📅 Personalized Study Plan</div>
+                <div><strong>⏱️ Total Recommended Time:</strong> ${minutes} minutes</div>
+                <div><strong>🎯 Study Sessions:</strong></div>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>📖 <strong>Session 1 (${Math.floor(minutes * 0.35)} min)</strong> - First Read & Understand</li>
+                    <li>📝 <strong>Session 2 (${Math.floor(minutes * 0.3)} min)</strong> - Take Notes & Summarize</li>
+                    <li>❓ <strong>Session 3 (${Math.floor(minutes * 0.2)} min)</strong> - Practice Questions</li>
+                    <li>🔄 <strong>Session 4 (${Math.floor(minutes * 0.15)} min)</strong> - Review & Recall</li>
+                </ul>
+                <div style="margin-top: 10px;"><strong>💡 Recommended Techniques:</strong> Active Recall, Spaced Repetition, Pomodoro</div>
+                <div style="margin-top: 10px; background: #eef2ff; padding: 10px; border-radius: 8px;">
+                    💡 <strong>Study Tip:</strong> Take a 5-minute break every 25 minutes for better focus and retention!
+                </div>
+            `;
+            resultDiv.classList.add('show');
+            showToast('✅ Study plan created!');
+        }
+
+        function compareTopics() {
+            const text1 = document.getElementById('compareText1').value.trim();
+            const text2 = document.getElementById('compareText2').value.trim();
+
+            if (!text1 || !text2) {
+                const msg = currentLang === 'en' ? 'Please enter both topics to compare!' :
+                           currentLang === 'te' ? 'దయచేసి పోల్చడానికి రెండు టాపిక్లను నమోదు చేయండి!' :
+                           'कृपया तुलना करने के लिए दोनों विषय दर्ज करें!';
+                showToast(msg);
+                return;
+            }
+
+            showLoading();
+
+            setTimeout(() => {
+                // Extract main ideas from both texts
+                const sentences1 = text1.split(/[.!?।|]+/).filter(s => s.trim().length > 15);
+                const sentences2 = text2.split(/[.!?।|]+/).filter(s => s.trim().length > 15);
+
+                const mainIdea1 = sentences1[0] || text1.substring(0, 100);
+                const mainIdea2 = sentences2[0] || text2.substring(0, 100);
+
+                // Find common words/terms
+                const words1 = new Set(text1.toLowerCase().split(/\s+/).filter(w => w.length > 3));
+                const words2 = new Set(text2.toLowerCase().split(/\s+/).filter(w => w.length > 3));
+                const commonWords = [...words1].filter(w => words2.has(w)).slice(0, 5);
+
+                let comparisonHtml = `
+                    <div style="font-weight: bold; margin-bottom: 15px; color: #2a5298;">🔄 Comparison Results</div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong>📌 Topic 1:</strong><br>
+                        <div style="background: white; padding: 10px; border-radius: 8px; margin-top: 5px;">${mainIdea1}${mainIdea1.length > 150 ? '...' : ''}</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong>📌 Topic 2:</strong><br>
+                        <div style="background: white; padding: 10px; border-radius: 8px; margin-top: 5px;">${mainIdea2}${mainIdea2.length > 150 ? '...' : ''}</div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <strong>✅ Similarities:</strong>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            ${commonWords.length > 0 ? commonWords.map(w => `<li>Both discuss concepts related to "${w}"</li>`).join('') : '<li>Both are important topics for learning</li>'}
+                            <li>Both require understanding of key concepts</li>
+                            <li>Both can be learned through practice and review</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <strong>🔄 Differences:</strong>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Topic 1 focuses on: ${mainIdea1.substring(0, 50)}...</li>
+                            <li>Topic 2 focuses on: ${mainIdea2.substring(0, 50)}...</li>
+                            <li>Different applications and contexts</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 15px; background: #eef2ff; padding: 12px; border-radius: 8px;">
+                        💡 <strong>Study Recommendation:</strong> Understand both topics separately first, then analyze how they connect. Create a comparison chart to visualize similarities and differences.
+                    </div>
+                `;
+
+                const resultDiv = document.getElementById('compareResult');
+                resultDiv.innerHTML = comparisonHtml;
+                resultDiv.classList.add('show');
+                hideLoading();
+                showToast('✅ Topics compared successfully!');
+            }, 500);
+        }
+
+        // Set example text
+        function setExampleText() {
+            const textarea = document.getElementById('mainText');
+            if (currentLang === 'te') {
+                textarea.value = `డాక్టర్ ఏ.పి.జె. అబ్దుల్ కలామ్ భారతదేశపు ప్రముఖ శాస్త్రవేత్త మరియు మాజీ రాష్ట్రపతి. ఆయనను "మిసైల్ మ్యాన్ ఆఫ్ ఇండియా" అని పిలుస్తారు. 1931 అక్టోబర్ 15న రామేశ్వరంలో జన్మించారు. ఇస్రో మరియు డీఆర్డీవోలో కీలక పాత్ర పోషించారు. పోఖ్రాన్-2 అణు పరీక్షల్లో ఆయన పాత్ర మరువలేనిది. "వింగ్స్ ఆఫ్ ఫైర్", "ఇగ్నైటెడ్ మైండ్స్" వంటి పుస్తకాలు రచించారు. విద్యార్థులకు స్ఫూర్తిగా నిలిచారు. 2015 జూలై 27న మరణించారు.`;
+            } else if (currentLang === 'hi') {
+                textarea.value = `डॉ. एपीजे अब्दुल कलाम भारत के प्रसिद्ध वैज्ञानिक और पूर्व राष्ट्रपति थे। उन्हें "भारत के मिसाइल मैन" के नाम से जाना जाता है। उनका जन्म 15 अक्टूबर 1931 को रामेश्वरम में हुआ था। उन्होंने ISRO और DRDO में महत्वपूर्ण भूमिका निभाई। पोखरण-2 परमाणु परीक्षण में उनकी भूमिका अविस्मरणीय है। उन्होंने "विंग्स ऑफ फायर", "इग्नाइटेड माइंड्स" जैसी पुस्तकें लिखीं। वे छात्रों के लिए प्रेरणास्रोत थे। 27 जुलाई 2015 को उनका निधन हो गया।`;
+            } else {
+                textarea.value = `Dr. A.P.J. Abdul Kalam was a renowned Indian scientist and the 11th President of India. He was born on October 15, 1931 in Rameswaram. Known as the "Missile Man of India," he played a key role in India's space and missile programs. He was associated with ISRO and DRDO. His role in Pokhran-II nuclear tests was remarkable. He authored books like "Wings of Fire" and "Ignited Minds". He was a great inspiration for students. He passed away on July 27, 2015.`;
+            }
+        }
+
+        setExampleText();
+    </script>
+</body>
+</html>
